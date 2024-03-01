@@ -70,7 +70,7 @@ function fileSave(){
   let json = {}; // new  JSON Object
 
   json.food_labels = loadedJSON["food_labels"];
-  json.kitchen_labels = loadedJSON["food_labels"];
+  json.kitchen_labels = loadedJSON["kitchen_labels"];
   json.food_data = this_food_data;
   json.kitchens_data = this_kitchens_data;
   saveJSON(json, 'My_CMT_Data.json');
