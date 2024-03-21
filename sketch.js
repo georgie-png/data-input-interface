@@ -27,7 +27,8 @@ function setup() {
   drawTitles();  
 
   loadedJSON = loadJSON('DEF-00.json', onFileload); 
-
+  numItem = loadedJSON["food_data"];
+  numItem = numItem;
   itemNum = int(random(0, numItem));
 } 
   
@@ -91,7 +92,7 @@ function drawStock(){
         if(k==numKitchens){
           text("Picked up", setXpos(k), vOffset + (i -txtOffset) * vDist - 10); 
         }else{
-          text("Kitchen "+ k, setXpos(k), vOffset + (i -txtOffset) * vDist - 10); 
+          text(loadedJSON["kitchen_labels"][k], setXpos(k), vOffset + (i -txtOffset) * vDist - 10); 
         }
 
       }
@@ -133,7 +134,7 @@ function drawNames(){
 function drawButtons(){
 
   for (let k = 0; k< 10; ++k){
-    let seletButton = createButton("Select Kitchen "+ k);
+    let seletButton = createButton("Then "+ loadedJSON["kitchen_labels"][k]);
     seletButton.mousePressed(() => {
       addData(k);
       nextItem();
