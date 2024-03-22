@@ -1,15 +1,16 @@
 let loadedJSON = null; 
-let vDist = 35;
-let vOffset = 275;
+let vDist = 37;
+let vOffset = 295;
 let xPos = 30;
-let xOffset = 450;
-let xSpace = 160;
+let xOffset = 470;
+let xSpace = 180;
 let vRectOffset = 0.82;
 let txtOffset = 0.6;
 
 let itemNum = 0;
-let numItem = 8155;
+let dataSize = 600;
 let numKitchens = 10;
+let numItem = 31
 
 let normals = [];
 let buttons= [];
@@ -19,50 +20,61 @@ let this_food_data = [];
 let this_kitchens_data = [];
 let numData = 0;
 
+let bevel = 5
+
+
 
 function setup() { 
-  createCanvas(windowWidth, windowHeight); 
+
+  let h = int(vOffset + (numItem+1) * vDist);
+  let w = setXpos(numKitchens+1.5)
+  createCanvas(w, h); 
   textSize(22); 
   
   drawTitles();  
 
-  loadedJSON = loadJSON('DEF-00.json', onFileload); 
-  numItem = loadedJSON["food_data"];
-  numItem = numItem;
-  itemNum = int(random(0, numItem));
+  loadedJSON = loadJSON('Full-Data-600.json', onFileload); 
+  itemNum = int(random(0, dataSize));
+
 } 
   
 function nextItem() { 
 
   itemNum++;
 
-  if(itemNum>numItem-1){
+  if(itemNum>dataSize-1){
     itemNum=0;
   }
-
+  drawStock();
   clear();
-
+  highlightRow();
   drawNames();
   drawStock();
-  highlightRow();
   drawTitles();
 
+  drawIfThen();
+
 } 
+
   
 function onFileload() { 
   //text("File loaded successfully...", 30, 100); 
 
+
   drawNames();
   
   drawStock();
-
+  highlightRow();
+  drawStock();
   drawButtons();
 
-  highlightRow();
+
+  drawIfThen()
 
     // Create a button for loading the JSON 
-  let saveButton = createButton("Save JSON file"); 
-  saveButton.position(30, 160) 
+  let saveButton = createButton("Save Samples"); 
+  saveButton.position(350, 162);
+  saveButton.size(xSpace, 40)
   saveButton.mousePressed(fileSave);
 
 } 
@@ -85,8 +97,8 @@ function drawStock(){
   findNormals();
 
   fill(50);
-  for(let k=0; k<11; k++){
-    for (let i = -1; i < 29; i++) { 
+  for(let k=0; k<numKitchens+1; k++){
+    for (let i = -1; i < numItem; i++) { 
 
       if(i==-1){
         if(k==numKitchens){
@@ -101,7 +113,7 @@ function drawStock(){
         let val = loadedJSON["food_data"][itemNum][k][i]/normals[i];
         if(val!=0){
 
-          rect(setXpos(k),  vOffset*vRectOffset+ i * vDist + vDist*0.1, val*xSpace*0.95, vDist*0.8);
+          rect(setXpos(k),  vOffset*vRectOffset+ i * vDist + vDist*0.1, val*xSpace*0.95, vDist*0.8, bevel);
           if(k==10){
             currentRow=i;
           }
@@ -120,12 +132,12 @@ function drawNames(){
   fill(50);
 
   // draw names
-  for (let i = -1; i < 29; i++) { 
+  for (let i = -1; i < numItem; i++) { 
     if(i==-1){
       text("Item:", xPos, vOffset + (i -txtOffset) * vDist); 
     }
     else{
-      text(loadedJSON["food_labels"][i], xPos, vOffset + (i -txtOffset) * vDist); 
+      text(loadedJSON["food_labels"][i], xPos+8, vOffset + (i -txtOffset) * vDist-5); 
     }
   } 
 
@@ -133,36 +145,43 @@ function drawNames(){
 
 function drawButtons(){
 
-  for (let k = 0; k< 10; ++k){
-    let seletButton = createButton("Then "+ loadedJSON["kitchen_labels"][k]);
-    seletButton.mousePressed(() => {
+  for (let k = 0; k< numKitchens; ++k){
+    let selectButton = createButton("Then "+ loadedJSON["kitchen_labels"][k]);
+    selectButton.mousePressed(() => {
+
       addData(k);
       nextItem();
     });
     let xPos = 30;
-    seletButton.position(setXpos(k), vOffset + 29 * vDist);
+    selectButton.position(setXpos(k), vOffset + numItem * vDist-20);
+    selectButton.size(xSpace*0.9, 30);
   }
-
-}
+ }
 
 function highlightRow(){
   fill(200, 50);
-  rect(xPos,  vOffset*vRectOffset+ currentRow * vDist, 12*xSpace+xOffset, vDist)
-  print(currentRow);
+  rect(xPos,  vOffset*vRectOffset+ currentRow * vDist, 12*xSpace+xOffset, vDist, bevel)
+  
 }
 
 function drawTitles(){
+ // let saveButton = document.getElementById("saveButton");
+
+//  saveButton.onclick(() => {
+//  fileSave()
+ // });
+
   fill(0);
   text("Collective Machine Teaching Interfaces", 30, 35); 
-  text("The Highlighted line shows which food you are to distribute. Look at the quantities each kitchen has of the items and then select a kitchen to send it to.", 30, 90); 
-  text("Once you have as many samples as you want download the data as a JSON with the button below.", 30, 120); 
-  text("Number of samples: " + numData, 30, 150);
+  text("The Highlighted line shows which food you are to distribute. The quantities each kitchen has of all the items is shown in the bar chart and then use it and your own knowledge to select a kitchen to send it to by pressing one of the buttons. So asking if ....g of .... foods, then ....'s kitchen.", 30, 70, width*0.95); 
+  text("Once you have as many samples as you want download the data as a JSON with the button below.", 30, 145); 
+  text("Number of samples: " + numData, 30, 188);
 }
 
 function findNormals(){
 
   normals=[];
-  for(let i=0; i<29; i++){
+  for(let i=0; i<numItem; i++){
 
     let max =0;
     for(let k=0; k<numKitchens+1;k++){
@@ -192,5 +211,13 @@ function addData( i){
   this_kitchens_data[numData] = Kitchen_data;
 
   numData++;
+
+}
+
+function drawIfThen(){
+  fill(0);
+  let val = loadedJSON["food_data"][itemNum][10][currentRow];
+  val = int(val);
+  text("If " + val + "g of "+ loadedJSON["food_labels"][currentRow] +"?", xPos*2, vOffset + numItem * vDist );//xPos, vOffset + 29 * vDist1);
 
 }
