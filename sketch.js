@@ -35,6 +35,7 @@ function setup() {
 
   loadedJSON = loadJSON('Full-Data-600.json', onFileload); 
   itemNum = int(random(0, dataSize));
+
 } 
   
 function nextItem() { 
@@ -147,6 +148,7 @@ function drawButtons(){
   for (let k = 0; k< numKitchens; ++k){
     let selectButton = createButton("Then "+ loadedJSON["kitchen_labels"][k]);
     selectButton.mousePressed(() => {
+
       addData(k);
       nextItem();
     });
