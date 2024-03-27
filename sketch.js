@@ -2,15 +2,15 @@ let loadedJSON = null;
 let vDist = 37;
 let vOffset = 295;
 let xPos = 30;
-let xOffset = 470;
+let xOffset = 250;
 let xSpace = 180;
 let vRectOffset = 0.82;
 let txtOffset = 0.6;
 
 let itemNum = 0;
-let dataSize = 600;
-let numKitchens = 10;
-let numItem = 31
+let dataSize = 5999;
+let numKitchens = 6;
+let numItem = 15
 
 let normals = [];
 let buttons= [];
@@ -33,7 +33,7 @@ function setup() {
   
   drawTitles();  
 
-  loadedJSON = loadJSON('Full-Data-600.json', onFileload); 
+  loadedJSON = loadJSON('Full-Data-80-20-split-6000.json', onFileload); 
   itemNum = int(random(0, dataSize));
 
 } 
@@ -108,15 +108,25 @@ function drawStock(){
         }
 
       }
-      else{
+      else if (k==numKitchens){
 
-        let val = loadedJSON["food_data"][itemNum][k][i]/normals[i];
+        let val = loadedJSON["food_data_train"][itemNum][10][i]/normals[i];
         if(val!=0){
 
           rect(setXpos(k),  vOffset*vRectOffset+ i * vDist + vDist*0.1, val*xSpace*0.95, vDist*0.8, bevel);
-          if(k==10){
-            currentRow=i;
-          }
+          
+          currentRow=i;
+          
+        }
+
+      }
+      else{
+
+        let val = loadedJSON["food_data_train"][itemNum][k][i]/normals[i];
+        if(val!=0){
+
+          rect(setXpos(k),  vOffset*vRectOffset+ i * vDist + vDist*0.1, val*xSpace*0.95, vDist*0.8, bevel);
+
         }
 
       }
@@ -160,7 +170,7 @@ function drawButtons(){
 
 function highlightRow(){
   fill(200, 50);
-  rect(xPos,  vOffset*vRectOffset+ currentRow * vDist, 12*xSpace+xOffset, vDist, bevel)
+  rect(xPos,  vOffset*vRectOffset+ currentRow * vDist, (numKitchens+2)*xSpace+xOffset, vDist, bevel)
   
 }
 
@@ -185,7 +195,7 @@ function findNormals(){
 
     let max =0;
     for(let k=0; k<numKitchens+1;k++){
-      let val = int(loadedJSON["food_data"][itemNum][k][i]);
+      let val = int(loadedJSON["food_data_train"][itemNum][k][i]);
       if(val>max){
         max=val;
       }
@@ -197,7 +207,7 @@ function findNormals(){
 
 function addData( i){
 
-  this_food_data[numData] = loadedJSON["food_data"][itemNum];
+  this_food_data[numData] = loadedJSON["food_data_train"][itemNum];
 
   let Kitchen_data = [];
 
@@ -216,7 +226,7 @@ function addData( i){
 
 function drawIfThen(){
   fill(0);
-  let val = loadedJSON["food_data"][itemNum][10][currentRow];
+  let val = loadedJSON["food_data_train"][itemNum][10][currentRow];
   val = int(val);
   text("If " + val + "g of "+ loadedJSON["food_labels"][currentRow] +"?", xPos*2, vOffset + numItem * vDist );//xPos, vOffset + 29 * vDist1);
 
