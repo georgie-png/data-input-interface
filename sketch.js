@@ -33,8 +33,10 @@ function setup() {
   
   drawTitles();  
 
+  itemNum = (int(random(0, 10000))*14)%dataSize;
+
   loadedJSON = loadJSON('Full-Data-80-20-split-6000.json', onFileload); 
-  itemNum = int(random(0, dataSize));
+
 
 } 
   
@@ -45,6 +47,8 @@ function nextItem() {
   if(itemNum>dataSize-1){
     itemNum=0;
   }
+
+
   drawStock();
   clear();
   highlightRow();
@@ -59,6 +63,7 @@ function nextItem() {
   
 function onFileload() { 
   //text("File loaded successfully...", 30, 100); 
+  findNormals();
 
 
   drawNames();
@@ -94,7 +99,6 @@ function fileSave(){
 
 function drawStock(){
 
-  findNormals();
 
   fill(50);
   for(let k=0; k<numKitchens+1; k++){
@@ -118,15 +122,15 @@ function drawStock(){
           currentRow=i;
           
         }
-
       }
       else{
 
         let val = loadedJSON["food_data_train"][itemNum][k][i]/normals[i];
+
         if(val!=0){
 
           rect(setXpos(k),  vOffset*vRectOffset+ i * vDist + vDist*0.1, val*xSpace*0.95, vDist*0.8, bevel);
-
+        
         }
 
       }
@@ -191,16 +195,24 @@ function drawTitles(){
 function findNormals(){
 
   normals=[];
-  for(let i=0; i<numItem; i++){
 
-    let max =0;
-    for(let k=0; k<numKitchens+1;k++){
-      let val = int(loadedJSON["food_data_train"][itemNum][k][i]);
-      if(val>max){
-        max=val;
-      }
-    }  
-    normals[i]=max;
+
+      for(let i=0; i<numItem; i++){
+
+        let max =0;
+
+        for(let n=0; n<dataSize; n++){
+
+          for(let k=0; k<11;k++){
+
+            let val = int(loadedJSON["food_data_train"][n][k][i]);
+
+            if(val>max){
+              max=val;
+            }
+          } 
+      } 
+      normals[i]=max;
 
   }
 }
