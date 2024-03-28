@@ -1,6 +1,7 @@
 html, body {
   margin: 0;
-  padding: 0;
+  padding-bottom: 20px;
+  padding-top: 10px;
 }
 
 canvas {
@@ -10,4 +11,49 @@ canvas {
 .dataInput{
   position: absolute;
   overflow: scroll;
+}
+#labelingDiv{
+  overflow: scroll;
+  width: auto;
+  display: flex;
+  justify-content: center;
+}
+
+#titles{
+  width: 80%;
+  text-align: center;
+  margin: auto;
+}
+.ifThen{
+  position: relative;
+margin: 40px;
+  display: ruby;
+}
+
+#buttonDiv{
+  width: 61%;
+  display: flex;
+  justify-content: space-around;
+  margin-left: 22%;
+  padding-bottom: 15px;
+}
+
+#dataDiv{
+  display: inline-block;
+}
+
+.interfacing{
+  display: inline-block;
+  align-self: center;
+}
+
+#saveDiv{
+  width: 100%;
+text-align: center
+}
+
+@media screen and (max-width: 1780px){
+  #labelingDiv{
+    justify-content: flex-start;
+  }
 }

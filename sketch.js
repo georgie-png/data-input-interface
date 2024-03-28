@@ -1,6 +1,6 @@
 let loadedJSON = null; 
 let vDist = 37;
-let vOffset = 295;
+let vOffset = 100;
 let xPos = 30;
 let xOffset = 250;
 let xSpace = 180;
@@ -23,15 +23,16 @@ let numData = 0;
 let bevel = 5
 
 
-
 function setup() { 
 
-  let h = int(vOffset + (numItem+1) * vDist);
+  let h = int((numItem+3.5) * vDist);
   let w = setXpos(numKitchens+1.5)
-  createCanvas(w, h); 
+  var myCanvas =   createCanvas(w, h);
+  myCanvas.parent("dataDiv");
+
   textSize(22); 
   
-  drawTitles();  
+  //drawTitles();  
 
   itemNum = (int(random(0, 10000))*14)%dataSize;
 
@@ -54,9 +55,12 @@ function nextItem() {
   highlightRow();
   drawNames();
   drawStock();
-  drawTitles();
+  //drawTitles();
 
   drawIfThen();
+
+  document.getElementById("smplNum").innerText = numData;
+
 
 } 
 
@@ -76,11 +80,24 @@ function onFileload() {
 
   drawIfThen()
 
+    const saveButton = document.createElement('button');
+    saveButton.innerText = "Save data";
+
+    saveButton.addEventListener('click', () => {
+      fileSave();
+    })
+
+    document.getElementById("saveDiv").appendChild(saveButton);
+
+  //let saveButton = document.getElementById('saveButton');
     // Create a button for loading the JSON 
-  let saveButton = createButton("Save Samples"); 
-  saveButton.position(350, 162);
-  saveButton.size(xSpace, 40)
-  saveButton.mousePressed(fileSave);
+  //let saveButton = createButton("Save Samples"); 
+  //saveButton.position(350, 162);
+  //saveButton.size(xSpace, 40)
+  //saveButton.mousePressed(fileSave);
+  //saveButton.mousePressed(() => {
+    //fileSave();
+  //});
 
 } 
 
@@ -106,9 +123,9 @@ function drawStock(){
 
       if(i==-1){
         if(k==numKitchens){
-          text("Picked up", setXpos(k), vOffset + (i -txtOffset) * vDist - 10); 
+          text("Picked up", setXpos(k), vOffset + i * vDist); 
         }else{
-          text(loadedJSON["kitchen_labels"][k], setXpos(k), vOffset + (i -txtOffset) * vDist - 10); 
+          text(loadedJSON["kitchen_labels"][k], setXpos(k), vOffset + i * vDist); 
         }
 
       }
@@ -148,27 +165,47 @@ function drawNames(){
   // draw names
   for (let i = -1; i < numItem; i++) { 
     if(i==-1){
-      text("Item:", xPos, vOffset + (i -txtOffset) * vDist); 
+      text("Item:", xPos, vOffset + i * vDist); 
     }
     else{
-      text(loadedJSON["food_labels"][i], xPos+8, vOffset + (i -txtOffset) * vDist-5); 
+      text(loadedJSON["food_labels"][i], xPos+8, vOffset + i * vDist+10); 
     }
   } 
 
 }
 
-function drawButtons(){
+function drawButtonsOld(){
 
   for (let k = 0; k< numKitchens; ++k){
     let selectButton = createButton("Then "+ loadedJSON["kitchen_labels"][k]);
     selectButton.mousePressed(() => {
-
       addData(k);
       nextItem();
     });
     let xPos = 30;
     selectButton.position(setXpos(k), vOffset + numItem * vDist-20);
     selectButton.size(xSpace*0.9, 30);
+    selectButton.parent("data");
+    selectButton.style.position = "static"
+
+  }
+ }
+
+ function drawButtons(){
+
+  var btnDiv = document.getElementById('buttonDiv')
+
+  for (let k = 0; k< numKitchens; ++k){
+    const button = document.createElement('button');
+    button.innerText = "Then "+ loadedJSON["kitchen_labels"][k]
+
+    button.addEventListener('click', () => {
+      addData(k);
+      nextItem();
+    })
+
+    btnDiv.appendChild(button);
+
   }
  }
 
@@ -240,6 +277,10 @@ function drawIfThen(){
   fill(0);
   let val = loadedJSON["food_data_train"][itemNum][10][currentRow];
   val = int(val);
-  text("If " + val + "g of "+ loadedJSON["food_labels"][currentRow] +"?", xPos*2, vOffset + numItem * vDist );//xPos, vOffset + 29 * vDist1);
+  //var weight = document.getElementById("weight");
+  //weight.innerText = val + "g";
+  //var food = document.getElementById("food");
+  //food.innerText = loadedJSON["food_labels"][currentRow] + "?";
+  text("If " + val + "g of "+ loadedJSON["food_labels"][currentRow] +"?", xPos*2, vOffset + numItem * vDist +16);//xPos, vOffset + 29 * vDist1);
 
 }
